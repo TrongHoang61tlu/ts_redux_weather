@@ -1,10 +1,9 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import weatherSlice from 'features/weather/weatherSlice';
-
+import counterReducer from '../features/counter/counterSlice';
 
 export const store = configureStore({
   reducer: {
-    weather : weatherSlice,
+    counter: counterReducer,
   },
 });
 
