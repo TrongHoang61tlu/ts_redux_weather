@@ -28,7 +28,7 @@ export const BannerTitle = styled.h1`
 
 export const Image = styled.img`
     width: 100px;
-    height: 50px;
+    height: 100%;
 
 `
 export const Temp = styled.h1`
