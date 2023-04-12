@@ -7,7 +7,7 @@ interface Hour  {
   // Các thuộc tính khác của đối tượng hour
 };
 
-export interface Dayly {
+export interface Daily {
   temp: {
     day : number;
   }
@@ -30,7 +30,7 @@ interface CoordinatesProps {
     description: string;
   }
   hourly:Hour[];
-  daily:Dayly[] ;
+  daily:Daily[] ;
 }
 
 

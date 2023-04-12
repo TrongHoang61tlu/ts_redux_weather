@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.section`
-   margin-top: 30px
+   margin-top: 150px;
 
 `;
 
@@ -31,7 +31,7 @@ export const Image = styled.img`
     height: 100%;
 
 `
-export const Temp = styled.h1`
+export const Temp = styled.div`
     font-size: 4rem;
     margin: 0 0 0 30px;
 `

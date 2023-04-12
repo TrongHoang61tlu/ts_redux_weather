@@ -3,6 +3,9 @@ import { NavLink } from 'react-router-dom';
 
 
 export const Wrapper = styled.section`
+  width: 100%;
+  position: fixed;
+  top: 0;
 `;
 export const Top = styled.section`
   height: 75px;
@@ -59,26 +62,47 @@ export const TopRight = styled.div`
 `;
 interface ToggleButtonProps{
   isActive : boolean;
+  
 }
 export const ToggleButton = styled.button<ToggleButtonProps>`
-  background-color: ${props => (props.isActive ? 'red' : 'blue')};
-  width:80px;
-  color: white;
-  padding: 8px 16px;
-  border: none;
+  width: 50px;
+  height: 30px;
+  background-color: #fff;
+  border-radius: 15px;
+  position: relative;
   cursor: pointer;
-  border-radius: 30px;
+
+  &:before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: #cccccc;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    transition: left 0.3s ease-in-out;
+  }
+
+  &.active:before {
+    background-color: red;
+    left: calc(100% - 20px - 2px);
+  }
 `;
 
 export const Bottom = styled.div`
   background-color:#9E979F;
   height: 50px;
+  margin-top: 0;
 `
 export const ListItem = styled.ul`
   list-style-type: none;
   display: flex;
   color: white;
   align-items : center;
+  margin-top:0;
 `
 interface ItemProps {
   isActive: boolean;
@@ -95,4 +119,5 @@ export const Item = styled.li<ItemProps>`
 export const Link = styled(NavLink)`
   text-decoration: none;
   color: white;
+
 `
