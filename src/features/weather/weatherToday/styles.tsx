@@ -13,28 +13,28 @@ export const Banner = styled.div`
     display: flex; 
     justify-content: space-between;
     padding:20px
-`
+`;
 
 export const BannerLeft = styled.div`
-`
+`;
 
 export const BannerRight = styled.div`
-`
+`;
 
 export const BannerTitle = styled.h1`
     display:flex;
     align-items: center;
-`
+`;
 
 export const Image = styled.img`
     width: 100px;
     height: 100%;
 
-`
+`;
 export const Temp = styled.div`
     font-size: 4rem;
     margin: 0 0 0 30px;
-`
+`;
 export const BannerContent = styled.ul`
     list-style: none;
     padding: 0;
@@ -42,14 +42,14 @@ export const BannerContent = styled.ul`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-`
+`;
 export const Items = styled.li`
     display: flex;
-`
+`;
 
 export const City = styled.h1`
     font-weight:700
-`
+`;
 
 export const Chart = styled.div`
     width: 90%;
@@ -57,11 +57,11 @@ export const Chart = styled.div`
     padding: 18px;
     background-color: rgba(192, 192, 192, 0.2);
     border-radius: 15px;
-`
+`;
 
 export const TitleChart = styled.h3`
     font-size: 2rem;
-`
+`;
 
 export const Predict = styled.div`
     width: 90%;
@@ -70,22 +70,22 @@ export const Predict = styled.div`
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 10px
-`
+`;
 interface PredictItemsProps{
     isActive: boolean;
-}
+};
 export const PredictItem = styled.div<PredictItemsProps>`
     background-color: ${(props) => props.isActive ? '#808080' : 'rgba(192, 192, 192, 0.5)'};
     cursor: pointer;
     border-radius: 15px;
-`
+`;
 
 export const ItemMonth = styled.p`
     font-size:1.3rem;
     display: flex;
     justify-content: center;
     color: rgba(0, 0, 0, 0.5);
-`
+`;
 
 export const Icon = styled.img`
     width:25px;
@@ -93,4 +93,4 @@ export const Icon = styled.img`
     position: relative;
     left: 50%;
     transform: translateX(-50%);
-`
+`;

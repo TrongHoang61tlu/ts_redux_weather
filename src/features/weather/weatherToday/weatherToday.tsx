@@ -1,39 +1,40 @@
+import { RootState } from 'app/store';
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Title,
+  Tooltip,
+} from 'chart.js';
+import {  iconUrlFromcode, timeFormat } from 'components/format';
 import * as React from 'react';
+import { Line } from 'react-chartjs-2';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCoordinates } from '../coordinateSlice';
+import { fetchWeather } from '../weatherSlice';
 import {
   Banner,
-  Wrapper,
+  BannerContent,
   BannerLeft,
   BannerRight,
   BannerTitle,
-  Image,
-  Temp,
-  BannerContent,
-  Items,
-  City,
   Chart,
-  TitleChart,
+  City,
+  Icon,
+  Image,
+  ItemMonth,
+  Items,
   Predict,
   PredictItem,
-  ItemMonth,
-  Icon,
+  Temp,
+  TitleChart,
+  Wrapper,
 } from './styles';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Filler,
-  Legend,
-} from 'chart.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchWeather } from '../weatherSlice';
-import { fetchCoordinates } from '../coordinateSlice';
-import { RootState } from 'app/store';
-import { formatDateTime, iconUrlFromcode, timeFormat } from 'components/format';
+import dayjs from 'dayjs';
 
 ChartJS.register(
   CategoryScale,
@@ -46,7 +47,7 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
+const options = {
   responsive: true,
   plugins: {
     legend: {
@@ -59,52 +60,40 @@ export const options = {
   },
 };
 
-export interface ITodayProps {}
 
+export interface ITodayProps {}
 export default function Today(props: ITodayProps) {
   const [isActive, setIsActive] = React.useState(0);
+  const [city, setCity] = React.useState('hanoi');
+  const dispatch = useDispatch<any>();
+  const weatherData = useSelector((state: RootState) => state.weather);
+  const coordinates = useSelector((state: RootState) => state.coordinate);
+  const Hourly = coordinates?.data?.hourly;
+  const Daily = coordinates?.data?.daily?.filter((daily, index) => index < 6);
+  const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const handleItemClick = (index: number) => {
     setIsActive(index);
   };
-  const [city, setCity] = React.useState('hanoi');
 
-  const dispatch = useDispatch<any>();
-  const weatherData = useSelector((state: RootState) => state.weather);
-  
+  const convertCelsiusToFahrenheit = (celsius: number, checker: boolean = true) => {
+    let result = '';
+    if (isCelsius) {
+      result = checker ? `${celsius} ℃` : `${celsius} `;
+    } else {
+      const fahrenheit = (celsius * 9) / 5 + 32;
+      result = checker ? `${fahrenheit} ℉` : `${fahrenheit}`;
+    }
+    return result;
+  };
 
-  const coordinates = useSelector((state: RootState) => state.coordinate);
-
-  const Hourly = coordinates?.data?.hourly;
-  const Daily = coordinates?.data?.daily?.filter((dayly, index) => index < 6);
-  React.useEffect(() => {
-    dispatch(fetchWeather(city)); // Gọi async thunk fetchWeather khi component mount
-  }, []);
-
-  React.useEffect(() => {
-    dispatch(
-      fetchCoordinates({ lat: weatherData?.data?.coord?.lat, lon: weatherData?.data?.coord?.lon })
-    ); // Gọi async thunk fetchCoordinates khi component mount
-  }, [weatherData?.data?.id]);
-
-  // Chuyen doi nhiet do 
-  const isCelsius = useSelector((state: any) => state.temperature.isCelsius);
-
-  function convertCelsiusToFahrenheit(celsius : number) {
-    // Công thức chuyển đổi: F = C * 9/5 + 32
-    const fahrenheit = ((celsius * 9/5) + 32).toFixed(2);
-    return fahrenheit;
-  }
-
-  //Biểu đồ
   const labels = Hourly?.map((temp) => timeFormat(temp?.dt));
-
   const dataChar = {
     labels,
     datasets: [
       {
         fill: false,
         label: 'Nhiệt độ',
-        data: Hourly?.map((hour) => isCelsius ? (hour.temp) : convertCelsiusToFahrenheit(hour.temp)),
+        data: Hourly?.map((hour) => convertCelsiusToFahrenheit(hour.temp, false)),
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
         tension: 0.7,
@@ -112,13 +101,30 @@ export default function Today(props: ITodayProps) {
     ],
   };
 
+  React.useEffect(() => {
+    dispatch(fetchWeather(city)); // Gọi async thunk fetchWeather khi component mount
+  }, []);
+  React.useEffect(() => {
+    const lat = weatherData?.data?.coord?.lat;
+    const lon = weatherData?.data?.coord?.lon;
+    if (lat && lon) {
+      dispatch(fetchCoordinates({ lat, lon }));
+    }
+  }, [weatherData?.data?.id]);
+  
   return (
     <Wrapper>
       <Banner>
         <BannerLeft>
           <BannerTitle>
-            <Image src={weatherData?.data?.weather?.length > 0 ? iconUrlFromcode(weatherData?.data?.weather[0]?.icon) : ''} />
-            <Temp>{`${isCelsius ? coordinates?.data?.current?.temp  : convertCelsiusToFahrenheit(coordinates?.data?.current?.temp)}${isCelsius ? '℃' : '℉'} `}</Temp>
+            <Image
+              src={
+                weatherData?.data?.weather?.length > 0
+                  ? iconUrlFromcode(weatherData?.data?.weather[0]?.icon)
+                  : ''
+              }
+            />
+            <Temp>{convertCelsiusToFahrenheit(coordinates?.data?.current?.temp)}</Temp>
           </BannerTitle>
           <BannerContent>
             <Items>Chance of precipitation: 0%</Items>
@@ -130,7 +136,7 @@ export default function Today(props: ITodayProps) {
           <City>{`${weatherData?.data?.name}, ${weatherData?.data?.sys?.country} `}</City>
           <BannerContent>
             <Items>Population: 1,431,270</Items>
-            <Items>{`${formatDateTime(weatherData?.data?.dt)}`} </Items>
+            <Items>{`${dayjs.unix((weatherData?.data?.dt)).format('MMMM YYYY')}`} </Items>
             <Items>
               {weatherData?.data?.weather?.length > 0
                 ? weatherData?.data?.weather[0]?.description
@@ -146,15 +152,15 @@ export default function Today(props: ITodayProps) {
       <Predict>
         {Daily?.map((daily, index) => (
           <PredictItem isActive={isActive === index} onClick={() => handleItemClick(index)}>
-            <ItemMonth>{`${formatDateTime(daily?.dt)}`}</ItemMonth>
+            <ItemMonth>{`${(dayjs.unix(daily?.dt)).format('MMMM YYYY')}`}</ItemMonth>
             <Icon src={iconUrlFromcode(daily?.weather[0].icon)}></Icon>
-            <ItemMonth>{`${isCelsius ?  daily?.temp?.day : convertCelsiusToFahrenheit(daily?.temp?.day)} ${isCelsius ? '℃' : '℉' }`}</ItemMonth>
+            <ItemMonth>{convertCelsiusToFahrenheit(daily?.temp?.day)}</ItemMonth>
             <ItemMonth>
-              {daily?.weather?.length > 0 ? daily?.weather[0].description  : null}
+              {daily?.weather?.length > 0 ? daily?.weather[0].description : null}
             </ItemMonth>
           </PredictItem>
         ))}
       </Predict>
     </Wrapper>
   );
-}
+};

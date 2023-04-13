@@ -63,7 +63,7 @@ export const TopRight = styled.div`
 interface ToggleButtonProps{
   isActive : boolean;
   
-}
+};
 export const ToggleButton = styled.button<ToggleButtonProps>`
   width: 50px;
   height: 30px;
@@ -77,11 +77,11 @@ export const ToggleButton = styled.button<ToggleButtonProps>`
     display: block;
     width: 20px;
     height: 20px;
-    background-color: #cccccc;
+    background-color: ${(props) => (props.isActive ? " red" : "#cccccc")};
     border-radius: 50%;
     position: absolute;
     top: 50%;
-    left: 2px;
+    left: ${(props) => (props.isActive ? "calc(100% - 20px - 2px)" : "2px")};
     transform: translateY(-50%);
     transition: left 0.3s ease-in-out;
   }
@@ -96,14 +96,14 @@ export const Bottom = styled.div`
   background-color:#9E979F;
   height: 50px;
   margin-top: 0;
-`
+`;
 export const ListItem = styled.ul`
   list-style-type: none;
   display: flex;
   color: white;
   align-items : center;
   margin-top:0;
-`
+`;
 interface ItemProps {
   isActive: boolean;
 }
@@ -115,9 +115,8 @@ export const Item = styled.li<ItemProps>`
   margin-right: 10px;
   padding: 13px;
   border-bottom: ${props => (props.isActive ? '2px solid white' : 'none')};
-`
+`;
 export const Link = styled(NavLink)`
   text-decoration: none;
   color: white;
-
-`
+`;

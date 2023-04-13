@@ -15,7 +15,7 @@ const temperatureSlice = createSlice({
   initialState,
   reducers: {
     setCalsius: (state, action: PayloadAction<number>) => {
-      state.celsius = action.payload;    
+      state.celsius = action.payload;
     },
     toggleUnit: (state) => {
       state.isCelsius = !state.isCelsius;
@@ -23,5 +23,5 @@ const temperatureSlice = createSlice({
   },
 });
 
-export const {setCalsius, toggleUnit} = temperatureSlice.actions;
+export const { setCalsius, toggleUnit } = temperatureSlice.actions;
 export default temperatureSlice.reducer;

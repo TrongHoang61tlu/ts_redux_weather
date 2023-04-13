@@ -2,10 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 interface weatherProps {
-    id: number;
-    main: string;
-    description: string;
-    icon: string;
+  id: number;
+  main: string;
+  description: string;
+  icon: string;
 }
 
 interface WeatherData {
@@ -31,7 +31,6 @@ interface WeatherData {
     deg: number;
   };
 }
-
 export const fetchWeather = createAsyncThunk('weather/fetchWeather', async (city: string) => {
   try {
     const response = await axios.get(
@@ -59,7 +58,6 @@ const weatherSlice = createSlice({
       .addCase(fetchWeather.rejected, (state, action) => {
         state.loading = false;
         state.error = action?.error.message || 'Unknown error';
-        state.data = state.data || 'gfi';
       });
   },
 });

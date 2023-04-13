@@ -1,68 +1,65 @@
+import { RootState } from 'app/store';
+import { toggleUnit } from 'features/weather/temperatureSlice';
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  Wrapper,
+  Bottom,
+  Button,
+  Input,
+  Item,
+  Link,
+  ListItem,
+  Logo,
+  Search,
+  Title,
+  ToggleButton,
   Top,
   TopLeft,
   TopRight,
-  Logo,
-  Title,
-  Search,
-  Input,
-  Button,
-  ToggleButton,
-  Bottom,
-  ListItem,
-  Item,
-  Link,
+  Wrapper,
 } from './styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { toggleUnit } from 'features/weather/temperatureSlice';
-import { RootState } from 'app/store';
-import { fetchWeather } from 'features/weather/weatherSlice';
-import { fetchCoordinates } from 'features/weather/coordinateSlice';
 
 export interface IHeaderProps {}
 
-interface ListItem {
+interface ListItemProps {
   label: string;
   link: string;
 }
 
-interface List {
-  [key: string]: ListItem;
+interface ListProps {
+  [key: string]: ListItemProps;
 }
-export default function Header(props : IHeaderProps) {
+
+const List: ListProps = {
+  0: { label: 'Today', link: '/' },
+  1: { label: 'Daily', link: '/daily' },
+  2: { label: 'Monthly', link: '/month' },
+};
+
+const mappedList = Object.keys(List).map((key) => {
+  const item = List[Number(key)];
+  return {
+    id: Number(key),
+    label: item.label,
+    link: item.link,
+  };
+});
+
+export default function Header(props: IHeaderProps) {
   const [isActive, setIsActive] = React.useState(true);
   const [city, setCity] = React.useState('');
-  const isCelsius = useSelector((state: any) => state.temperature.isCelsius);
-  const weatherData = useSelector((state : RootState) => state.weather)
+  const [activeItem, setActiveItem] = React.useState(0);
+  const weatherData = useSelector((state: RootState) => state.weather);
+  const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const dispatch = useDispatch();
   const handleToggle = () => {
     setIsActive((isActive) => !isActive);
     dispatch(toggleUnit());
   };
-
-  const [activeItem, setActiveItem] = React.useState(0);
   const handleItemClick = (index: number) => {
     setActiveItem(index);
   };
-  //Tạo list render navbar
-  const List: List = {
-    0: { label: 'Today', link: '/' },
-    1: { label: 'Daily', link: '/daily' },
-    2: { label: 'Monthly', link: '/month' },
-  };
-  const listKeys = Object.keys(List);
-  const renderedList = listKeys.map((key) => {
-    const listItem = List[key];
-    return (
-      <a href={listItem.link} key={key}>
-        {listItem.label}
-      </a>
-    );
-  });
-  
-  
+
   return (
     <Wrapper>
       <Top>
@@ -71,26 +68,29 @@ export default function Header(props : IHeaderProps) {
           <Title>{`${weatherData?.data?.name}`}</Title>
         </TopLeft>
         <Search>
-          <Input 
-          placeholder="Tìm kiếm"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
+          <Input
+            placeholder="Tìm kiếm"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
           ></Input>
           <Button>Tìm kiếm</Button>
         </Search>
         <TopRight>
-          <ToggleButton className={!isActive ? 'active' : ''} isActive={isActive} onClick={handleToggle} id="buton">
-          </ToggleButton>
+          <ToggleButton   
+            isActive={!isActive}
+            onClick={handleToggle}
+            id="buton"
+          ></ToggleButton>
           <span>{isCelsius ? '℃' : '℉'} </span>
           <span>🌙</span>
         </TopRight>
       </Top>
       <Bottom>
         <ListItem>
-          {renderedList.map((item, index) => (
-            <Link to={item?.props?.href} key={index}>
+          {mappedList?.map((item, index) => (
+            <Link to={item?.link} key={index}>
               <Item isActive={activeItem === index} onClick={() => handleItemClick(index)}>
-                {item.props?.children}
+                {item?.label}
               </Item>
             </Link>
           ))}
@@ -98,4 +98,4 @@ export default function Header(props : IHeaderProps) {
       </Bottom>
     </Wrapper>
   );
-}
+};
