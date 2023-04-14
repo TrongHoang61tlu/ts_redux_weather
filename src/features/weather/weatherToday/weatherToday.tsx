@@ -46,6 +46,7 @@ ChartJS.register(
   Filler,
   Legend
 );
+export interface ITodayProps {}
 
 const options = {
   responsive: true,
@@ -58,10 +59,9 @@ const options = {
       text: 'Chart.js Line Chart',
     },
   },
+  type : 'line',
 };
 
-
-export interface ITodayProps {}
 export default function Today(props: ITodayProps) {
   const [isActive, setIsActive] = React.useState(0);
   const [city, setCity] = React.useState('hanoi');
@@ -86,14 +86,18 @@ export default function Today(props: ITodayProps) {
     return result;
   };
 
-  const labels = hourlyList?.map((temp) => timeFormat(temp?.dt));
-  const dataChar = {
-    labels,
+  const labels = hourlyList?.map((temp) => timeFormat(temp?.dt) );
+  const filterLabel = labels?.filter((label, index) => index %3 ===0)
+  const temp = hourlyList?.map((hour) => convertCelsiusToFahrenheit(hour.temp, false));
+  const filterTemp = temp?.filter((temp, index) => index % 3===0);
+  const data= {
+    type : 'line',
+    labels : filterLabel,
     datasets: [
       {
         fill: false,
         label: 'Nhiệt độ',
-        data: hourlyList?.map((hour) => convertCelsiusToFahrenheit(hour?.temp, false)),
+        data: filterTemp ,
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
         tension: 0.7,
@@ -111,7 +115,6 @@ export default function Today(props: ITodayProps) {
       dispatch(fetchCoordinates({ lat, lon }));
     }
   }, [weatherData?.data?.id]);
-  
   return (
     <Wrapper>
       <Banner>
@@ -145,14 +148,14 @@ export default function Today(props: ITodayProps) {
           </BannerContent>
         </BannerRight>
       </Banner>
-      <Chart>
+      <Chart >
         <TitleChart>{`Temperature ${isCelsius ? '℃' : '℉'}`}</TitleChart>
-        <Line options={options} data={dataChar} />
+        <Line options={options} data={data} />
       </Chart>
       <Predict>
         {dailyList?.map((daily, index) => (
-          <PredictItem isActive={isActive === index} onClick={() => handleItemClick(index)} key={index}>
-            <ItemMonth>{`${(dayjs.unix(daily?.dt)).format('MMMM D')}`}</ItemMonth>
+          <PredictItem isActive={isActive === index} onClick={() => handleItemClick(index)} key={index} id='index'>
+            <ItemMonth>{`${(dayjs.unix(daily?.dt)).format('MMMM YYYY')}`}</ItemMonth>
             <Icon src={iconUrlFromcode(daily?.weather[0].icon)}></Icon>
             <ItemMonth>{convertCelsiusToFahrenheit(daily?.temp?.day)}</ItemMonth>
             <ItemMonth>

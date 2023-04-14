@@ -54,7 +54,7 @@ export const City = styled.h1`
 `;
 
 export const Chart = styled.div`
-  width: 90%;
+  width: 67%;
   margin: 40px auto;
   padding: 18px;
   background: white;
@@ -65,6 +65,8 @@ export const Chart = styled.div`
 
 export const TitleChart = styled.h3`
   font-size: 2rem;
+  padding:0;
+  margin: 0;
 `;
 
 export const Predict = styled.div`

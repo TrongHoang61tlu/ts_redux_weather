@@ -42,6 +42,7 @@ export const Search = styled.div`
   width: 500px;
   height: 36px;
   display: flex;
+  padding: 10px
 `;
 
 export const Button = styled.button`
