@@ -68,8 +68,8 @@ export default function Today(props: ITodayProps) {
   const dispatch = useDispatch<any>();
   const weatherData = useSelector((state: RootState) => state.weather);
   const coordinates = useSelector((state: RootState) => state.coordinate);
-  const Hourly = coordinates?.data?.hourly;
-  const Daily = coordinates?.data?.daily?.filter((daily, index) => index < 6);
+  const hourlyList = coordinates?.data?.hourly;
+  const dailyList = coordinates?.data?.daily?.slice(0,6);
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const handleItemClick = (index: number) => {
     setIsActive(index);
@@ -80,20 +80,20 @@ export default function Today(props: ITodayProps) {
     if (isCelsius) {
       result = checker ? `${celsius} ℃` : `${celsius} `;
     } else {
-      const fahrenheit = (celsius * 9) / 5 + 32;
+      const fahrenheit = ((celsius * 9) / 5 + 32).toFixed(2);
       result = checker ? `${fahrenheit} ℉` : `${fahrenheit}`;
     }
     return result;
   };
 
-  const labels = Hourly?.map((temp) => timeFormat(temp?.dt));
+  const labels = hourlyList?.map((temp) => timeFormat(temp?.dt));
   const dataChar = {
     labels,
     datasets: [
       {
         fill: false,
         label: 'Nhiệt độ',
-        data: Hourly?.map((hour) => convertCelsiusToFahrenheit(hour.temp, false)),
+        data: hourlyList?.map((hour) => convertCelsiusToFahrenheit(hour?.temp, false)),
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
         tension: 0.7,
@@ -136,7 +136,7 @@ export default function Today(props: ITodayProps) {
           <City>{`${weatherData?.data?.name}, ${weatherData?.data?.sys?.country} `}</City>
           <BannerContent>
             <Items>Population: 1,431,270</Items>
-            <Items>{`${dayjs.unix((weatherData?.data?.dt)).format('MMMM YYYY')}`} </Items>
+            <Items>{`${dayjs.unix((weatherData?.data?.dt)).format('MMMM D')}`} </Items>
             <Items>
               {weatherData?.data?.weather?.length > 0
                 ? weatherData?.data?.weather[0]?.description
@@ -150,9 +150,9 @@ export default function Today(props: ITodayProps) {
         <Line options={options} data={dataChar} />
       </Chart>
       <Predict>
-        {Daily?.map((daily, index) => (
-          <PredictItem isActive={isActive === index} onClick={() => handleItemClick(index)}>
-            <ItemMonth>{`${(dayjs.unix(daily?.dt)).format('MMMM YYYY')}`}</ItemMonth>
+        {dailyList?.map((daily, index) => (
+          <PredictItem isActive={isActive === index} onClick={() => handleItemClick(index)} key={index}>
+            <ItemMonth>{`${(dayjs.unix(daily?.dt)).format('MMMM D')}`}</ItemMonth>
             <Icon src={iconUrlFromcode(daily?.weather[0].icon)}></Icon>
             <ItemMonth>{convertCelsiusToFahrenheit(daily?.temp?.day)}</ItemMonth>
             <ItemMonth>

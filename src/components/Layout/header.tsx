@@ -11,12 +11,14 @@ import {
   ListItem,
   Logo,
   Search,
+  TempChange,
   Title,
   ToggleButton,
   Top,
   TopLeft,
   TopRight,
   Wrapper,
+  DayNight,
 } from './styles';
 
 export interface IHeaderProps {}
@@ -36,17 +38,8 @@ const List: ListProps = {
   2: { label: 'Monthly', link: '/month' },
 };
 
-const mappedList = Object.keys(List).map((key) => {
-  const item = List[Number(key)];
-  return {
-    id: Number(key),
-    label: item.label,
-    link: item.link,
-  };
-});
-
 export default function Header(props: IHeaderProps) {
-  const [isActive, setIsActive] = React.useState(true);
+  const [isActive, setIsActive] = React.useState(false);
   const [city, setCity] = React.useState('');
   const [activeItem, setActiveItem] = React.useState(0);
   const weatherData = useSelector((state: RootState) => state.weather);
@@ -76,21 +69,19 @@ export default function Header(props: IHeaderProps) {
           <Button>Tìm kiếm</Button>
         </Search>
         <TopRight>
-          <ToggleButton   
-            isActive={!isActive}
-            onClick={handleToggle}
-            id="buton"
-          ></ToggleButton>
-          <span>{isCelsius ? '℃' : '℉'} </span>
-          <span>🌙</span>
+          <TempChange>
+            <ToggleButton isActive={isActive} onClick={handleToggle} id="buton"></ToggleButton>
+            <span>{isCelsius ? '℃' : '℉'} </span>
+          </TempChange>
+          <DayNight>🌙</DayNight>
         </TopRight>
       </Top>
       <Bottom>
         <ListItem>
-          {mappedList?.map((item, index) => (
-            <Link to={item?.link} key={index}>
+          {Object.keys(List).map((item, index) => (
+            <Link to={List[item].link} key={index}>
               <Item isActive={activeItem === index} onClick={() => handleItemClick(index)}>
-                {item?.label}
+                {List[item].label}
               </Item>
             </Link>
           ))}
@@ -98,4 +89,4 @@ export default function Header(props: IHeaderProps) {
       </Bottom>
     </Wrapper>
   );
-};
+}
