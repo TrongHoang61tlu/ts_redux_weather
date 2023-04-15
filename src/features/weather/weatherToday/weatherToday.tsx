@@ -2,6 +2,7 @@ import { RootState } from 'app/store';
 import {
   CategoryScale,
   Chart as ChartJS,
+  ChartOptions,
   Filler,
   Legend,
   LineElement,
@@ -12,7 +13,7 @@ import {
 } from 'chart.js';
 import {  iconUrlFromcode, timeFormat } from 'components/format';
 import * as React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line} from 'react-chartjs-2';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCoordinates } from '../coordinateSlice';
 import { fetchWeather } from '../weatherSlice';
@@ -48,8 +49,20 @@ ChartJS.register(
 );
 export interface ITodayProps {}
 
-const options = {
+const options: ChartOptions<'line'> = {
   responsive: true,
+  scales : {
+    // x: {
+    //   ticks : {
+    //     maxTicksLimit : 20,
+    //   }
+    // },
+    y: {
+    ticks : {
+      maxTicksLimit : 5,
+    }
+    },
+  },
   plugins: {
     legend: {
       position: 'top' as const,
@@ -59,7 +72,6 @@ const options = {
       text: 'Chart.js Line Chart',
     },
   },
-  type : 'line',
 };
 
 export default function Today(props: ITodayProps) {
