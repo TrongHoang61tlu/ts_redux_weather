@@ -11,7 +11,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import {  iconUrlFromcode, timeFormat } from 'components/format';
+import {  iconUrlFromcode} from 'components/format';
 import * as React from 'react';
 import { Line} from 'react-chartjs-2';
 import { useDispatch, useSelector } from 'react-redux';
@@ -83,8 +83,8 @@ export default function Today(props: ITodayProps) {
   const hourlyList = coordinates?.data?.hourly;
   const dailyList = coordinates?.data?.daily?.slice(0,6);
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
-  const handleItemClick = (index: number) => {
-    setIsActive(index);
+  const handleItemClick = (key: number) => {
+    setIsActive(key);
   };
 
   const convertCelsiusToFahrenheit = (celsius: number, checker: boolean = true) => {
@@ -98,10 +98,12 @@ export default function Today(props: ITodayProps) {
     return result;
   };
 
-  const labels = hourlyList?.map((temp) => timeFormat(temp?.dt) );
+  const labels = hourlyList?.map((temp) => dayjs.unix(temp?.dt).format('h:mmA') );
   const filterLabel = labels?.filter((label, index) => index %3 ===0)
   const temp = hourlyList?.map((hour) => convertCelsiusToFahrenheit(hour.temp, false));
   const filterTemp = temp?.filter((temp, index) => index % 3===0);
+  console.log(labels);
+  
   const data= {
     type : 'line',
     labels : filterLabel,
@@ -151,7 +153,7 @@ export default function Today(props: ITodayProps) {
           <City>{`${weatherData?.data?.name}, ${weatherData?.data?.sys?.country} `}</City>
           <BannerContent>
             <Items>Population: 1,431,270</Items>
-            <Items>{`${dayjs.unix((weatherData?.data?.dt)).format('MMMM D')}`} </Items>
+            <Items>{dayjs.unix((weatherData?.data?.dt)).format('MMMM D')} </Items>
             <Items>
               {weatherData?.data?.weather?.length > 0
                 ? weatherData?.data?.weather[0]?.description
@@ -167,7 +169,7 @@ export default function Today(props: ITodayProps) {
       <Predict>
         {dailyList?.map((daily, index) => (
           <PredictItem isActive={isActive === index} onClick={() => handleItemClick(index)} key={index} id='index'>
-            <ItemMonth>{`${(dayjs.unix(daily?.dt)).format('MMMM YYYY')}`}</ItemMonth>
+            <ItemMonth>{(dayjs.unix(daily?.dt)).format('MMMM D')}</ItemMonth>
             <Icon src={iconUrlFromcode(daily?.weather[0].icon)}></Icon>
             <ItemMonth>{convertCelsiusToFahrenheit(daily?.temp?.day)}</ItemMonth>
             <ItemMonth>

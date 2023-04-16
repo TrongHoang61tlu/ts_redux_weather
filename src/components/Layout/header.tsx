@@ -49,16 +49,15 @@ export default function Header(props: IHeaderProps) {
     setIsActive((isActive) => !isActive);
     dispatch(toggleUnit());
   };
-  const handleItemClick = (index: number) => {
-    setActiveItem(index);
+  const handleItemClick = (key : number) => {
+    setActiveItem(key);
   };
-
   return (
     <Wrapper>
       <Top>
         <TopLeft>
           <Logo>Home</Logo>
-          <Title>{`${weatherData?.data?.name}`}</Title>
+          <Title>{weatherData?.data?.name}</Title>
         </TopLeft>
         <Search>
           <Input
