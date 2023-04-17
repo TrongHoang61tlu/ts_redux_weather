@@ -1,123 +1,90 @@
+import { RootState } from 'app/store';
+import { toggleUnit } from 'features/weather/temperatureSlice';
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  Bottom,
+  Button,
+  Input,
+  Item,
+  Link,
+  ListItem,
+  Logo,
+  Search,
+  TempChange,
+  Title,
+  ToggleButton,
+  Top,
+  TopLeft,
+  TopRight,
+  Wrapper,
+  DayNight,
+} from './styles';
 
-const Wrapper = styled.section`
-`;
-const Top = styled.section`
-  height: 75px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background-color: white;
-`;
-
-const TopLeft = styled.div`
-  display: flex;
-`;
-const Logo = styled.h1`
-  font-size: 40px;
-  font-weight: 400;
-`;
-const Title = styled.h3`
-  color: #b55620;
-  font-size: 32px;
-  font-weight: 700;
-  margin-top: 50px;
-  margin-left: 10px;
-`;
-
-const Search = styled.div`
-  width: 700px;
-  height: 30px;
-`;
-
-const Button = styled.button`
-  width: 100px;
-  height: 100%;
-  background-color: #cccccc;
-  cursor: pointer;
-  border-top-right-radius: 25px;
-  border-bottom-right-radius: 25px;
-`;
-
-const Input = styled.input`
-  width: 500px;
-  border-top-left-radius: 25px;
-  border-bottom-left-radius: 25px;
-  height: 24px;
-`;
-
-const TopRight = styled.div`
-  display: flex;
-  width: 210px;
-  font-size: 32px;
-  justify-content: space-between;
-`;
-
-const ToggleButton = styled.button`
-  background-color: red;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 50%;
-`;
-
-const Bottom = styled.div`
-  background-color:#9E979F;
-  height: 50px;
-`
-const ListItem = styled.ul`
-  list-style-type: none;
-  display: flex;
-  color: white;
-  display: flex;
-  align-items : center;
-`
-const Item = styled.li`
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 700;
-  margin-left: 10px;
-  margin-right: 10px;
-  padding: 13px;
-  border-bottom: 1px solid #fffff' 
-`
-const Link = styled(NavLink)`
-  text-decoration: none;
-  color: white;
-`
 export interface IHeaderProps {}
-export default function Header(props: IHeaderProps) {
-  const [active, setActive] = React.useState(false);
 
+interface ListItemProps {
+  label: string;
+  link: string;
+}
+
+interface ListProps {
+  [key: string]: ListItemProps;
+}
+
+const List: ListProps = {
+  0: { label: 'Today', link: '/' },
+  1: { label: 'Daily', link: '/daily' },
+  2: { label: 'Monthly', link: '/month' },
+};
+
+export default function Header(props: IHeaderProps) {
+  const [isActive, setIsActive] = React.useState(false);
+  const [city, setCity] = React.useState('');
+  const [activeItem, setActiveItem] = React.useState(0);
+  const weatherData = useSelector((state: RootState) => state.weather);
+  const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
+  const dispatch = useDispatch();
   const handleToggle = () => {
-    setActive(!active);
+    setIsActive((isActive) => !isActive);
+    dispatch(toggleUnit());
+  };
+  const handleItemClick = (key : number) => {
+    setActiveItem(key);
   };
   return (
     <Wrapper>
       <Top>
         <TopLeft>
           <Logo>Home</Logo>
-          <Title>Hanoi</Title>
+          <Title>{weatherData?.data?.name}</Title>
         </TopLeft>
         <Search>
-          <Input placeholder="Tìm kiếm"></Input>
+          <Input
+            placeholder="Tìm kiếm"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          ></Input>
           <Button>Tìm kiếm</Button>
         </Search>
         <TopRight>
-          <ToggleButton onClick={handleToggle}>{active ? 'ON' : 'OFF'}</ToggleButton>
-          <span>℃</span>
-          <span>🌙</span>
+          <TempChange>
+            <ToggleButton isActive={isActive} onClick={handleToggle} id="buton"></ToggleButton>
+            <span>{isCelsius ? '℃' : '℉'} </span>
+          </TempChange>
+          <DayNight>🌙</DayNight>
         </TopRight>
       </Top>
       <Bottom>
-          <ListItem>
-            <Item><Link to="/">Today</Link></Item>
-            <Item><Link to="/daily">Daily</Link></Item>
-            <Item><Link to='/Month'>Monthly</Link></Item>
-          </ListItem>
+        <ListItem>
+          {Object.keys(List).map((item, index) => (
+            <Link to={List[item].link} key={index}>
+              <Item isActive={activeItem === index} onClick={() => handleItemClick(index)}>
+                {List[item].label}
+              </Item>
+            </Link>
+          ))}
+        </ListItem>
       </Bottom>
     </Wrapper>
   );

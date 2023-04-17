@@ -6,7 +6,7 @@ export interface IMonthProps {
 export default function Month (props: IMonthProps) {
   return (
     <div>
-      Month
+      month
     </div>
   );
 }
