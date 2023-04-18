@@ -26,6 +26,7 @@ interface WeatherData {
   sys: {
     country: string;
   };
+  timezone: number;
   wind: {
     speed: number;
     deg: number;

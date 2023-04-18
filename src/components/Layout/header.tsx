@@ -49,7 +49,7 @@ export default function Header(props: IHeaderProps) {
     setIsActive((isActive) => !isActive);
     dispatch(toggleUnit());
   };
-  const handleItemClick = (key : number) => {
+  const handleItemClick = (key: number) => {
     setActiveItem(key);
   };
   return (
@@ -78,8 +78,11 @@ export default function Header(props: IHeaderProps) {
       <Bottom>
         <ListItem>
           {Object.keys(List).map((item, index) => (
-            <Link to={List[item].link} key={index}>
-              <Item isActive={activeItem === index} onClick={() => handleItemClick(index)}>
+            <Link to={List[item].link} key={item}>
+              <Item
+                isActive={activeItem === parseFloat(item)}
+                onClick={() => handleItemClick(parseFloat(item))}
+              >
                 {List[item].label}
               </Item>
             </Link>
