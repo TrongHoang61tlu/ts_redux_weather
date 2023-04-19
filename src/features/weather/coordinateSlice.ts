@@ -9,14 +9,27 @@ interface Hour {
 export interface Daily {
   temp: {
     day: number;
+    night: number;
   };
   dt: number;
   weather: {
+    main : string;
     description: string;
     icon: string;
     length: any;
     0: any;
   };
+  id : number;
+  wind_speed: number;
+  wind_deg: number;
+  wind_gust : number;
+  humidity: number;
+  uvi : number;
+  sunrise : number;
+  sunset : number;
+  moonrise : number;
+  moonset : number;
+  dew_point: number;
 }
 interface CoordinatesProps {
   lat: number;

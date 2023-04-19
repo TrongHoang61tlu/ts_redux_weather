@@ -11,9 +11,9 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import {  iconUrlFromcode} from 'components/format';
+import { iconUrlFromcode } from 'components/format';
 import * as React from 'react';
-import { Line} from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCoordinates } from '../coordinateSlice';
 import { fetchWeather } from '../weatherSlice';
@@ -51,16 +51,16 @@ export interface ITodayProps {}
 
 const options: ChartOptions<'line'> = {
   responsive: true,
-  scales : {
+  scales: {
     // x: {
     //   ticks : {
     //     maxTicksLimit : 20,
     //   }
     // },
     y: {
-    ticks : {
-      maxTicksLimit : 5,
-    }
+      ticks: {
+        maxTicksLimit: 5,
+      },
     },
   },
   plugins: {
@@ -81,7 +81,7 @@ export default function Today(props: ITodayProps) {
   const weatherData = useSelector((state: RootState) => state.weather);
   const coordinates = useSelector((state: RootState) => state.coordinate);
   const hourlyList = coordinates?.data?.hourly;
-  const dailyList = coordinates?.data?.daily?.slice(0,6);
+  const dailyList = coordinates?.data?.daily?.slice(0, 6);
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const handleItemClick = (key: number) => {
     setIsActive(key);
@@ -98,20 +98,19 @@ export default function Today(props: ITodayProps) {
     return result;
   };
 
-  const labels = hourlyList?.map((temp) => dayjs.unix(temp?.dt).format('h:mmA') );
-  const filterLabel = labels?.filter((label, index) => index %3 ===0)
+  const labels = hourlyList?.map((temp) => dayjs.unix(temp?.dt).format('h:mmA'));
+  const filterLabel = labels?.filter((label, index) => index % 3 === 0);
   const temp = hourlyList?.map((hour) => convertCelsiusToFahrenheit(hour.temp, false));
-  const filterTemp = temp?.filter((temp, index) => index % 3===0);
-  console.log(labels);
-  
-  const data= {
-    type : 'line',
-    labels : filterLabel,
+  const filterTemp = temp?.filter((temp, index) => index % 3 === 0);
+
+  const data = {
+    type: 'line',
+    labels: filterLabel,
     datasets: [
       {
         fill: false,
         label: 'Nhiệt độ',
-        data: filterTemp ,
+        data: filterTemp,
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
         tension: 0.7,
@@ -153,7 +152,7 @@ export default function Today(props: ITodayProps) {
           <City>{`${weatherData?.data?.name}, ${weatherData?.data?.sys?.country} `}</City>
           <BannerContent>
             <Items>Population: 1,431,270</Items>
-            <Items>{dayjs.unix((weatherData?.data?.dt)).format('MMMM D')} </Items>
+            <Items>{dayjs.unix(weatherData?.data?.dt).format('MMMM D')} </Items>
             <Items>
               {weatherData?.data?.weather?.length > 0
                 ? weatherData?.data?.weather[0]?.description
@@ -162,14 +161,19 @@ export default function Today(props: ITodayProps) {
           </BannerContent>
         </BannerRight>
       </Banner>
-      <Chart >
+      <Chart>
         <TitleChart>{`Temperature ${isCelsius ? '℃' : '℉'}`}</TitleChart>
         <Line options={options} data={data} />
       </Chart>
       <Predict>
         {dailyList?.map((daily, index) => (
-          <PredictItem isActive={isActive === index} onClick={() => handleItemClick(index)} key={index} id='index'>
-            <ItemMonth>{(dayjs.unix(daily?.dt)).format('MMMM D')}</ItemMonth>
+          <PredictItem
+            isActive={isActive === index}
+            onClick={() => handleItemClick(index)}
+            key={index}
+            id="index"
+          >
+            <ItemMonth>{dayjs.unix(daily?.dt).format('MMMM D')}</ItemMonth>
             <Icon src={iconUrlFromcode(daily?.weather[0].icon)}></Icon>
             <ItemMonth>{convertCelsiusToFahrenheit(daily?.temp?.day)}</ItemMonth>
             <ItemMonth>
@@ -180,4 +184,4 @@ export default function Today(props: ITodayProps) {
       </Predict>
     </Wrapper>
   );
-};
+}
