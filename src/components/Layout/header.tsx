@@ -41,7 +41,7 @@ const List: ListProps = {
 export default function Header(props: IHeaderProps) {
   const [isActive, setIsActive] = React.useState(false);
   const [city, setCity] = React.useState('');
-  const [activeItem, setActiveItem] = React.useState(0);
+  const [activeItem, setActiveItem] = React.useState('0');
   const weatherData = useSelector((state: RootState) => state.weather);
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const dispatch = useDispatch();
@@ -49,9 +49,10 @@ export default function Header(props: IHeaderProps) {
     setIsActive((isActive) => !isActive);
     dispatch(toggleUnit());
   };
-  const handleItemClick = (key: number) => {
+  const handleItemClick = (key: string) => {
     setActiveItem(key);
   };
+
   return (
     <Wrapper>
       <Top>
@@ -80,8 +81,8 @@ export default function Header(props: IHeaderProps) {
           {Object.keys(List).map((item, index) => (
             <Link to={List[item].link} key={item}>
               <Item
-                isActive={activeItem === parseFloat(item)}
-                onClick={() => handleItemClick(parseFloat(item))}
+                isActive={activeItem === item}
+                onClick={() => handleItemClick(item)}
               >
                 {List[item].label}
               </Item>
