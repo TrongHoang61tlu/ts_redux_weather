@@ -46,7 +46,7 @@ export interface IWeekItemProps {
 }
 export default function WeekItem({ data, openAll }: IWeekItemProps) {
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
-  const [expandedDay, setExpandedDay] = React.useState<number[]>([]);
+  const [expandedDay, setExpandedDay] = React.useState<boolean>(false);
 
   //Hàm chuyển đổi C <-> F
   const convertCelsiusToFahrenheit = (celsius: number, checker: boolean = true) => {
@@ -62,20 +62,11 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
 
   // Hàm xử lý sự kiện click vào ngày
   const handleDayClick = (date: number) => {
-    const isExpanded = expandedDay.includes(date);
-    if (isExpanded) {
-      setExpandedDay(expandedDay.filter((day) => day !== date));
-    } else {
-      setExpandedDay([...expandedDay, date]);
-    }
+    setExpandedDay(!expandedDay);
   };
   // Hàm xử lý sự kiện click đóng mở tất cả các ngày
   React.useEffect(() => {
-    if (openAll) {
-      setExpandedDay([data].map((item: any) => item.dt));
-    } else {
-      setExpandedDay([]);
-    }
+    setExpandedDay(openAll);
   }, [openAll, data]);
 
   return (
@@ -104,12 +95,12 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
                 data?.wind_speed
               } mph`}</WindTitle>
             </Wind>
-            <Updown>▼</Updown>
+            <Updown>{expandedDay ? '▲' : '▼'}</Updown>
           </Right>
         </WeekItems>
       </div>
       {/* Kiểm tra nếu ngày đang được mở rộng thì hiển thị các thuộc tính bổ sung */}
-      {expandedDay.includes(data?.dt) && (
+      {expandedDay && (
         <WeekDetail>
           <Day>
             <DayTitle>{`${dayjs.unix(data?.dt).format('ddd D')} | Day`}</DayTitle>

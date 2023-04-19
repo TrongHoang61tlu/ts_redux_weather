@@ -69,4 +69,4 @@ export default function Daily(props: IDailyProps) {
       </Wrapper>
     </div>
   );
-};
+}
