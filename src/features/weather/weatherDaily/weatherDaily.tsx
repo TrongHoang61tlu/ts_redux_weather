@@ -1,6 +1,7 @@
 import { useAppDispatch } from 'app/hooks';
 import { RootState } from 'app/store';
 import dayjs from 'dayjs';
+import WeekItem from 'features/weather/weatherDaily/weekItem/WeekItem';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { fetchCoordinates } from '../coordinateSlice';
@@ -18,25 +19,18 @@ import {
   Week,
   Wrapper,
 } from './styles';
-import WeekItem from 'features/weather/weatherDaily/weekItem/WeekItem';
 export interface IDailyProps {}
 export default function Daily(props: IDailyProps) {
-  const [expandedDay, setExpandedDay] = React.useState<number[]>([]);
   const [city, setCity] = React.useState('hanoi');
   const dispatch = useAppDispatch();
   const weatherData = useSelector((state: RootState) => state.weather);
   const coordinates = useSelector((state: RootState) => state.coordinate);
   const dailyList = coordinates?.data?.daily;
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const handleOpenAllDayClick = () => {
-    if (expandedDay?.length === dailyList?.length) {
-      setExpandedDay([]);
-    } else {
-      const date = dailyList.map((day) => day?.dt);
-      setExpandedDay(date);
-    }
+    setIsOpen((isOpen) => !isOpen);
   };
-  // console.log(expandedDay);
 
   React.useEffect(() => {
     dispatch(fetchWeather(city)); // Gọi async thunk fetchWeather khi component mount
@@ -63,21 +57,16 @@ export default function Daily(props: IDailyProps) {
           <HeaderWeek>
             <ThisWeekTitle>This Week</ThisWeekTitle>
             <ToggleButton onClick={handleOpenAllDayClick}>
-              {expandedDay?.length === dailyList?.length ? 'Đóng tất cả' : ' Hiển thị tất cả'}
+              {isOpen ? 'Đóng tất cả' : ' Hiển thị tất cả'}
             </ToggleButton>
           </HeaderWeek>
           <Week>
             {dailyList?.map((daily) => (
-              <WeekItem
-                data={daily}
-                key={daily?.dt}
-                expandedDayProps={expandedDay}
-                setExpandedDayProps={setExpandedDay}
-              />
+              <WeekItem data={daily} key={daily?.dt} openAll={isOpen} />
             ))}
           </Week>
         </ThisWeek>
       </Wrapper>
     </div>
   );
-}
+};

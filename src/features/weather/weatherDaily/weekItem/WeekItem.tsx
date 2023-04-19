@@ -1,52 +1,54 @@
-import { useSelector } from 'react-redux';
-import {
-  Date,
-  WeekItems,
-  Left,
-  Temp,
-  TempDay,
-  TempNight,
-  Status,
-  StatusImg,
-  StatusTitle,
-  Right,
-  Precipitation,
-  PrecipitationImg,
-  PrecipitationTitle,
-  Wind,
-  WindImg,
-  WindTitle,
-  Updown,
-  WeekDetail,
-  Day,
-  DayTitle,
-  DayMain,
-  DayTemp,
-  DayProperties,
-  Content,
-  Night,
-  TableLeft,
-  TableRight,
-  ListDetail,
-  Detail,
-  DetailIcon,
-  DetailContent,
-  DetailItem,
-  DetailParams,
-} from './style';
 import { RootState } from 'app/store';
 import { convertDegreesToWindDirection, iconUrlFromcode } from 'components/format';
 import dayjs from 'dayjs';
 import { Daily } from 'features/weather/coordinateSlice';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import {
+  Content,
+  Date,
+  Day,
+  DayMain,
+  DayProperties,
+  DayTemp,
+  DayTitle,
+  Detail,
+  DetailContent,
+  DetailIcon,
+  DetailItem,
+  DetailParams,
+  Left,
+  ListDetail,
+  Night,
+  Precipitation,
+  PrecipitationImg,
+  PrecipitationTitle,
+  Right,
+  Status,
+  StatusImg,
+  StatusTitle,
+  TableLeft,
+  TableRight,
+  Temp,
+  TempDay,
+  TempNight,
+  Updown,
+  WeekDetail,
+  WeekItems,
+  Wind,
+  WindImg,
+  WindTitle,
+} from './style';
 
 export interface IWeekItemProps {
   data: Daily;
-  expandedDayProps : number[];
-  setExpandedDayProps : any;
+  openAll: boolean;
 }
-
-export default function WeekItem({ data, setExpandedDayProps, expandedDayProps}: IWeekItemProps) {
+export default function WeekItem({ data, openAll }: IWeekItemProps) {
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
+  const [expandedDay, setExpandedDay] = React.useState<number[]>([]);
+
+  //Hàm chuyển đổi C <-> F
   const convertCelsiusToFahrenheit = (celsius: number, checker: boolean = true) => {
     let result = '';
     if (isCelsius) {
@@ -57,19 +59,27 @@ export default function WeekItem({ data, setExpandedDayProps, expandedDayProps}:
     }
     return result;
   };
-  
+
   // Hàm xử lý sự kiện click vào ngày
   const handleDayClick = (date: number) => {
-    const isExpanded = expandedDayProps.includes(date);
-    // Nếu ngày đã được mở rộng, đóng nó lại
+    const isExpanded = expandedDay.includes(date);
     if (isExpanded) {
-      setExpandedDayProps(expandedDayProps.filter((day) => day !== date));
+      setExpandedDay(expandedDay.filter((day) => day !== date));
     } else {
-      setExpandedDayProps([...expandedDayProps, date]);
+      setExpandedDay([...expandedDay, date]);
     }
   };
+  // Hàm xử lý sự kiện click đóng mở tất cả các ngày
+  React.useEffect(() => {
+    if (openAll) {
+      setExpandedDay([data].map((item: any) => item.dt));
+    } else {
+      setExpandedDay([]);
+    }
+  }, [openAll, data]);
+
   return (
-    <div >
+    <div>
       <div onClick={() => handleDayClick(data?.dt)}>
         <WeekItems>
           <Left>
@@ -99,7 +109,7 @@ export default function WeekItem({ data, setExpandedDayProps, expandedDayProps}:
         </WeekItems>
       </div>
       {/* Kiểm tra nếu ngày đang được mở rộng thì hiển thị các thuộc tính bổ sung */}
-      {expandedDayProps.includes(data?.dt) && (
+      {expandedDay.includes(data?.dt) && (
         <WeekDetail>
           <Day>
             <DayTitle>{`${dayjs.unix(data?.dt).format('ddd D')} | Day`}</DayTitle>
