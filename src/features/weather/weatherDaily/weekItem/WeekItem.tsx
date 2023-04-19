@@ -62,12 +62,12 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
 
   // Hàm xử lý sự kiện click vào ngày
   const handleDayClick = (date: number) => {
-    setExpandedDay(!expandedDay);
+    setExpandedDay((expandedDay) => !expandedDay);
   };
   // Hàm xử lý sự kiện click đóng mở tất cả các ngày
   React.useEffect(() => {
     setExpandedDay(openAll);
-  }, [openAll, data]);
+  }, [openAll]);
 
   return (
     <div>
