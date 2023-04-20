@@ -43,7 +43,6 @@ export default function Daily(props: IDailyProps) {
     }
   }, [weatherData?.data?.id]);
   return (
-    <div>
       <Wrapper>
         <Top>
           <Main>
@@ -67,6 +66,5 @@ export default function Daily(props: IDailyProps) {
           </Week>
         </ThisWeek>
       </Wrapper>
-    </div>
   );
 }

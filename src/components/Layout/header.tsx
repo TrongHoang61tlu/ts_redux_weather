@@ -35,7 +35,7 @@ interface ListProps {
 const List: ListProps = {
   0: { label: 'Today', link: '/' },
   1: { label: 'Daily', link: '/daily' },
-  2: { label: 'Monthly', link: '/month' },
+  2: { label: 'Hourly', link: '/hour' },
 };
 
 export default function Header(props: IHeaderProps) {

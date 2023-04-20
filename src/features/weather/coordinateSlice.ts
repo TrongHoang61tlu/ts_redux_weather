@@ -1,9 +1,25 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-interface Hour {
+export interface Hour {
   temp: number;
   dt: number;
+  time: number;
+  weather: {
+    main : string;
+    description: string;
+    icon: string;
+    length: any;
+    0: any;
+  };
+  dew_point: number;
+  wind_deg: number;
+  wind_speed: number;
+  feels_like:number;
+  humidity: number;
+  uvi: number;
+  clouds : number;
+  pressure : number;
 }
 
 export interface Daily {
