@@ -1,9 +1,7 @@
-import { RootState } from 'app/store';
 import { convertDegreesToWindDirection, iconUrlFromcode } from 'components/format';
 import dayjs from 'dayjs';
 import { Daily } from 'features/weather/coordinateSlice';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import {
   Content,
   Date,
@@ -39,26 +37,17 @@ import {
   WindImg,
   WindTitle,
 } from './style';
+import { useTemperatureConversion } from 'hooks/useIsCelsius';
 
 export interface IWeekItemProps {
   data: Daily;
   openAll: boolean;
 }
 export default function WeekItem({ data, openAll }: IWeekItemProps) {
-  const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const [expandedDay, setExpandedDay] = React.useState<boolean>(false);
 
   //Hàm chuyển đổi C <-> F
-  const convertCelsiusToFahrenheit = (celsius: number, checker: boolean = true) => {
-    let result = '';
-    if (isCelsius) {
-      result = checker ? `${celsius} ℃` : `${celsius}° `;
-    } else {
-      const fahrenheit = ((celsius * 9) / 5 + 32).toFixed(0);
-      result = checker ? `${fahrenheit} ℉` : `${fahrenheit}°`;
-    }
-    return result;
-  };
+  const {convertCelsiusToFahrenheit} = useTemperatureConversion();
 
   // Hàm xử lý sự kiện click vào ngày
   const handleDayClick = (date: number) => {

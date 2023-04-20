@@ -1,34 +1,33 @@
-import { useAppSelector } from 'app/hooks';
-import { RootState } from 'app/store';
 import { convertDegreesToWindDirection, iconUrlFromcode } from 'components/format';
 import dayjs from 'dayjs';
 import { Hour } from 'features/weather/coordinateSlice';
 import React from 'react';
 import {
-    Date,
-    Detail,
-    DetailContent,
-    DetailIcon,
-    DetailItem,
-    DetailParams,
-    Left,
-    ListDetail,
-    Precipitation,
-    PrecipitationImg,
-    PrecipitationTitle,
-    Right,
-    Status,
-    StatusImg,
-    StatusTitle,
-    Table,
-    Temp,
-    TempDay,
-    Updown,
-    WeekItems,
-    Wind,
-    WindImg,
-    WindTitle
+  Date,
+  Detail,
+  DetailContent,
+  DetailIcon,
+  DetailItem,
+  DetailParams,
+  Left,
+  ListDetail,
+  Precipitation,
+  PrecipitationImg,
+  PrecipitationTitle,
+  Right,
+  Status,
+  StatusImg,
+  StatusTitle,
+  Table,
+  Temp,
+  TempDay,
+  Updown,
+  WeekItems,
+  Wind,
+  WindImg,
+  WindTitle,
 } from './styles';
+import { useTemperatureConversion } from 'hooks/useIsCelsius';
 
 export interface IHourlyItemProps {
   data: Hour;
@@ -36,20 +35,10 @@ export interface IHourlyItemProps {
 }
 
 export default function HourlyItem({ data, openAll }: IHourlyItemProps) {
-  const isCelsius = useAppSelector((state: RootState) => state.temperature.isCelsius);
   const [expandedTime, setExpandedTime] = React.useState<boolean>(false);
 
   //Hàm chuyển đổi C <-> F
-  const convertCelsiusToFahrenheit = (celsius: number, checker: boolean = true) => {
-    let result = '';
-    if (isCelsius) {
-      result = checker ? `${celsius} ℃` : `${celsius}° `;
-    } else {
-      const fahrenheit = ((celsius * 9) / 5 + 32).toFixed(0);
-      result = checker ? `${fahrenheit} ℉` : `${fahrenheit}°`;
-    }
-    return result;
-  };
+  const { convertCelsiusToFahrenheit } = useTemperatureConversion();
 
   // Hàm xử lý sự kiện click vào giờ
   const handleDayClick = (dt: number) => {
