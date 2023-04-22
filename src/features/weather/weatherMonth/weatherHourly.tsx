@@ -7,31 +7,31 @@ import { Hour, fetchCoordinates } from '../coordinateSlice';
 import { fetchWeather } from '../weatherSlice';
 import HourlyItem from './hourlyItem/hourlyItem';
 import {
-    City,
-    HeaderWeek,
-    Main,
-    ThisWeek,
-    Time,
-    Title,
-    TitleDate,
-    ToggleButton,
-    Top,
-    Week,
-    Wrapper,
+  City,
+  HeaderWeek,
+  Main,
+  ThisWeek,
+  Time,
+  Title,
+  TitleDate,
+  ToggleButton,
+  Top,
+  Week,
+  Wrapper,
 } from './styles';
 
 export interface IHourlyProps {}
 
 export default function Hourly(props: IHourlyProps) {
   const dispatch = useAppDispatch();
-  const [city, setCity] = React.useState('hanoi');
-  const [isOpen, setIsOpen] = React.useState(false);
   const weatherData = useAppSelector((state: RootState) => state.weather);
   const coordinates = useAppSelector((state: RootState) => state.coordinate);
+  const [city, setCity] = React.useState('hanoi');
+  const [isOpen, setIsOpen] = React.useState(false);
   const hourlyList = coordinates?.data?.hourly;
 
   const weatherDataByDate = _.groupBy(hourlyList, (data: Hour) =>
-    dayjs.unix(data.dt).format('dddd,MMMM D')
+    dayjs.unix(data.dt).format('dddd, MMMM D')
   );
 
   const handleOpenAllDayClick = () => {
@@ -68,7 +68,7 @@ export default function Hourly(props: IHourlyProps) {
           <div>
             {Object.entries(weatherDataByDate).map(([date, hourlyList]) => (
               <div key={date}>
-                <TitleDate>{dayjs(date).format('dddd, MMMM DD')}</TitleDate>
+                <TitleDate>{date}</TitleDate>
                 {hourlyList.map((hourlyData, index) => (
                   <HourlyItem data={hourlyData} key={index} openAll={isOpen} />
                 ))}

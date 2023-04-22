@@ -1,4 +1,4 @@
-import { configureStore, ThunkAction, Action, Middleware } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import weatherSlice from 'features/weather/weatherSlice';
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
 import coordinateSlice from 'features/weather/coordinateSlice';

@@ -32,6 +32,37 @@ interface WeatherData {
     deg: number;
   };
 }
+
+const defaultWeatherData: WeatherData = {
+  id: 0,
+  name: '',
+  coord: {
+    lat: 0,
+    lon: 0,
+  },
+  weather: [],
+  dt: 0,
+  main: {
+    temp: 0,
+    feels_like: 0,
+    pressure: 0,
+    humidity: 0,
+  },
+  sys: {
+    country: '',
+  },
+  timezone: 0,
+  wind: {
+    speed: 0,
+    deg: 0,
+  },
+};
+
+const initialState: { data: WeatherData; loading: boolean; error: null } = {
+  data: defaultWeatherData,
+  loading: false,
+  error: null,
+};
 export const fetchWeather = createAsyncThunk('weather/fetchWeather', async (city: string) => {
   try {
     const response = await axios.get(
@@ -45,7 +76,7 @@ export const fetchWeather = createAsyncThunk('weather/fetchWeather', async (city
 
 const weatherSlice = createSlice({
   name: 'weather',
-  initialState: { data: {} as WeatherData, loading: false, error: null as string | null },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -58,7 +89,7 @@ const weatherSlice = createSlice({
       })
       .addCase(fetchWeather.rejected, (state, action) => {
         state.loading = false;
-        state.error = action?.error.message || 'Unknown error';
+        // state.error = action?.error.message || 'Unknown error';
       });
   },
 });

@@ -27,7 +27,9 @@ import {
   WindImg,
   WindTitle,
 } from './styles';
-import { useTemperatureConversion } from 'hooks/useIsCelsius';
+import { convertCelsiusToFahrenheit } from 'components/format';
+import { useAppSelector } from 'app/hooks';
+import { RootState } from 'app/store';
 
 export interface IHourlyItemProps {
   data: Hour;
@@ -36,9 +38,7 @@ export interface IHourlyItemProps {
 
 export default function HourlyItem({ data, openAll }: IHourlyItemProps) {
   const [expandedTime, setExpandedTime] = React.useState<boolean>(false);
-
-  //Hàm chuyển đổi C <-> F
-  const { convertCelsiusToFahrenheit } = useTemperatureConversion();
+  const isCelsius = useAppSelector((state : RootState) => state.temperature.isCelsius )
 
   // Hàm xử lý sự kiện click vào giờ
   const handleDayClick = (dt: number) => {
@@ -49,6 +49,15 @@ export default function HourlyItem({ data, openAll }: IHourlyItemProps) {
     setExpandedTime(openAll);
   }, [openAll]);
 
+  const detailItems = [
+    { icon: "image/feels_like.jpg", label: "Feels_like", value: `${data?.feels_like}°` },
+    { icon: "image/wind.jpg", label: "Wind", value: data?.wind_speed },
+    { icon: "image/humidity.jpg", label: "Humidity", value: `${data?.humidity}%` },
+    { icon: "image/uvindex.jpg", label: "UV Index", value: data?.uvi },
+    { icon: "image/cloud.jpg", label: "Cloud Cover", value: data?.clouds },
+    { icon: "image/pressure.jpg", label: "Pressure", value: `${data?.pressure}hPa` },
+  ];
+  
   return (
     <div>
       <div onClick={() => handleDayClick(data?.dt)}>
@@ -56,7 +65,7 @@ export default function HourlyItem({ data, openAll }: IHourlyItemProps) {
           <Left>
             <Date>{dayjs.unix(data?.dt).format('h a')}</Date>
             <Temp>
-              <TempDay>{convertCelsiusToFahrenheit(data?.temp, false)}</TempDay>
+              <TempDay>{convertCelsiusToFahrenheit(isCelsius,data?.temp, false)}</TempDay>
             </Temp>
             <Status>
               <StatusImg src={iconUrlFromcode(data?.weather[0]?.icon)}></StatusImg>
@@ -82,48 +91,15 @@ export default function HourlyItem({ data, openAll }: IHourlyItemProps) {
         {expandedTime && (
           <Table>
             <ListDetail>
-              <Detail>
-                <DetailIcon src="image/feels_like.jpg"></DetailIcon>
+              {detailItems.map((item) => (
+              <Detail key={item?.label}>
+                <DetailIcon src={item?.icon}></DetailIcon>
                 <DetailContent>
-                  <DetailItem>Feels_like</DetailItem>
-                  <DetailParams>{`${data?.feels_like}°`}</DetailParams>
+                  <DetailItem>{item?.label}</DetailItem>
+                  <DetailParams>{item?.value}</DetailParams>
                 </DetailContent>
               </Detail>
-              <Detail>
-                <DetailIcon src="image/wind.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Wind</DetailItem>
-                  <DetailParams>{data?.wind_speed}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/humidity.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Humidity</DetailItem>
-                  <DetailParams>{`${data?.humidity}%`}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/uvindex.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>UV Index</DetailItem>
-                  <DetailParams>{data?.uvi}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/cloud.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Cloud Cover</DetailItem>
-                  <DetailParams>{data?.clouds}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/pressure.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Pressure</DetailItem>
-                  <DetailParams>{`${data?.pressure}hPa`}</DetailParams>
-                </DetailContent>
-              </Detail>
+              ))}
             </ListDetail>
           </Table>
         )}

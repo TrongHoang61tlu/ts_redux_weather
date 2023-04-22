@@ -1,25 +1,27 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+export interface Weather {
+  main: string;
+  description: string;
+  icon: string;
+  length: any;
+  0: any;
+}
+
 export interface Hour {
   temp: number;
   dt: number;
   time: number;
-  weather: {
-    main : string;
-    description: string;
-    icon: string;
-    length: any;
-    0: any;
-  };
+  weather: Weather[];
   dew_point: number;
   wind_deg: number;
   wind_speed: number;
-  feels_like:number;
+  feels_like: number;
   humidity: number;
   uvi: number;
-  clouds : number;
-  pressure : number;
+  clouds: number;
+  pressure: number;
 }
 
 export interface Daily {
@@ -28,23 +30,17 @@ export interface Daily {
     night: number;
   };
   dt: number;
-  weather: {
-    main : string;
-    description: string;
-    icon: string;
-    length: any;
-    0: any;
-  };
-  id : number;
+  weather: Weather[];
+  id: number;
   wind_speed: number;
   wind_deg: number;
-  wind_gust : number;
+  wind_gust: number;
   humidity: number;
-  uvi : number;
-  sunrise : number;
-  sunset : number;
-  moonrise : number;
-  moonset : number;
+  uvi: number;
+  sunrise: number;
+  sunset: number;
+  moonrise: number;
+  moonset: number;
   dew_point: number;
 }
 interface CoordinatesProps {
@@ -60,6 +56,25 @@ interface CoordinatesProps {
   daily: Daily[];
 }
 
+const defaultCoordinatesProps: CoordinatesProps = {
+  hourly: [],
+  daily: [],
+  lat: 0,
+  lon: 0,
+  current :{
+    temp: 0,
+  },
+  weather : {
+    description: '',
+  }
+};
+
+const initialState: { data: CoordinatesProps, loading: boolean, error: null } = {
+  data: defaultCoordinatesProps,
+  loading: false,
+  error: null
+};
+
 export const fetchCoordinates = createAsyncThunk(
   'weather/fetchCoordinates',
   async ({ lat, lon }: { lat: number; lon: number }) => {
@@ -72,7 +87,7 @@ export const fetchCoordinates = createAsyncThunk(
 
 const CoordinatesSlice = createSlice({
   name: 'coordinates',
-  initialState: { data: {} as CoordinatesProps, loading: false, error: null },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
