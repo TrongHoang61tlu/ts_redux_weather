@@ -1,9 +1,7 @@
-import { RootState } from 'app/store';
 import { convertDegreesToWindDirection, iconUrlFromcode } from 'components/format';
 import dayjs from 'dayjs';
 import { Daily } from 'features/weather/coordinateSlice';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import {
   Content,
   Date,
@@ -39,31 +37,37 @@ import {
   WindImg,
   WindTitle,
 } from './style';
+import { convertCelsiusToFahrenheit } from 'components/format';
+import { useAppSelector } from 'app/hooks';
+import { RootState } from 'app/store';
 
 export interface IWeekItemProps {
   data: Daily;
   openAll: boolean;
 }
 export default function WeekItem({ data, openAll }: IWeekItemProps) {
-  const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const [expandedDay, setExpandedDay] = React.useState<boolean>(false);
-
-  //Hàm chuyển đổi C <-> F
-  const convertCelsiusToFahrenheit = (celsius: number, checker: boolean = true) => {
-    let result = '';
-    if (isCelsius) {
-      result = checker ? `${celsius} ℃` : `${celsius}° `;
-    } else {
-      const fahrenheit = ((celsius * 9) / 5 + 32).toFixed(0);
-      result = checker ? `${fahrenheit} ℉` : `${fahrenheit}°`;
-    }
-    return result;
-  };
+  const isCelsius = useAppSelector((state: RootState) => state.temperature.isCelsius);
 
   // Hàm xử lý sự kiện click vào ngày
   const handleDayClick = (date: number) => {
     setExpandedDay((expandedDay) => !expandedDay);
   };
+
+  const leftItems = [
+    { icon: 'image/humidity.jpg', label: 'Humidity', value: `${data?.humidity}°` },
+    { icon: 'image/uvindex.jpg', label: 'UV Index', value: `${data?.uvi}%` },
+    { icon: 'image/sunrise.jpg', label: 'Sunrise', value: `${dayjs.unix(data?.sunrise).format('h:mm a')}` },
+    { icon: 'image/sunset.jpg', label: 'Sunset', value: `${dayjs.unix(data?.sunset).format('h:mm a')}` },
+  ];
+
+  const rightItems = [
+    { icon: 'image/humidity.jpg', label: 'Humidity', value: `${data?.humidity}°` },
+    { icon: 'image/uvindex.jpg', label: 'UV Index', value: `${data?.uvi}%` },
+    { icon: 'image/moonrise.webp', label: 'Moonrise', value:`${dayjs.unix(data?.moonrise).format('h:mm a')}` },
+    { icon: 'image/moonset.webp', label: 'Moonset', value: `${dayjs.unix(data?.moonset).format('h:mm a')}` },
+  ];
+
   // Hàm xử lý sự kiện click đóng mở tất cả các ngày
   React.useEffect(() => {
     setExpandedDay(openAll);
@@ -76,8 +80,10 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
           <Left>
             <Date>{dayjs.unix(data?.dt).format('ddd D')}</Date>
             <Temp>
-              <TempDay>{convertCelsiusToFahrenheit(data?.temp?.day, false)}</TempDay>
-              <TempNight>/{convertCelsiusToFahrenheit(data?.temp?.night, false)}</TempNight>
+              <TempDay>{convertCelsiusToFahrenheit(isCelsius, data?.temp?.day, false)}</TempDay>
+              <TempNight>
+                /{convertCelsiusToFahrenheit(isCelsius, data?.temp?.night, false)}
+              </TempNight>
             </Temp>
             <Status>
               <StatusImg src={iconUrlFromcode(data?.weather[0]?.icon)}></StatusImg>
@@ -105,7 +111,7 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
           <Day>
             <DayTitle>{`${dayjs.unix(data?.dt).format('ddd D')} | Day`}</DayTitle>
             <DayMain>
-              <DayTemp>{convertCelsiusToFahrenheit(data?.temp?.day)}</DayTemp>
+              <DayTemp>{convertCelsiusToFahrenheit(isCelsius, data?.temp?.day)}</DayTemp>
               <StatusImg src={iconUrlFromcode(data?.weather[0]?.icon)}></StatusImg>
               <DayProperties>
                 <Precipitation>
@@ -122,6 +128,7 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
             </DayMain>
             <Content>
               {`Mainly ${data?.weather[0]?.main}. Height ${convertCelsiusToFahrenheit(
+                isCelsius,
                 data?.temp?.day
               )}. Winds ${convertDegreesToWindDirection(data?.wind_deg)} at ${
                 data?.wind_speed
@@ -131,7 +138,7 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
           <Night>
             <DayTitle>{`${dayjs.unix(data?.dt).format('ddd D')} | Night`}</DayTitle>
             <DayMain>
-              <DayTemp>{convertCelsiusToFahrenheit(data?.temp?.night)}</DayTemp>
+              <DayTemp>{convertCelsiusToFahrenheit(isCelsius, data?.temp?.night)}</DayTemp>
               <StatusImg src={iconUrlFromcode(data?.weather[0]?.icon)}></StatusImg>
               <DayProperties>
                 <Precipitation>
@@ -148,6 +155,7 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
             </DayMain>
             <Content>
               {`Mainly ${data?.weather[0]?.main}. Height ${convertCelsiusToFahrenheit(
+                isCelsius,
                 data?.temp?.day
               )}. Winds ${convertDegreesToWindDirection(data?.wind_deg)} at ${
                 data?.wind_speed
@@ -156,66 +164,28 @@ export default function WeekItem({ data, openAll }: IWeekItemProps) {
           </Night>
           <TableLeft>
             <ListDetail>
-              <Detail>
-                <DetailIcon src="image/humidity.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Humidity</DetailItem>
-                  <DetailParams>{`${data?.humidity} %`}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/uvindex.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>UV Index</DetailItem>
-                  <DetailParams>{data?.uvi}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/sunrise.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Sunrise</DetailItem>
-                  <DetailParams>{dayjs.unix(data?.sunrise).format('h:mm a')}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/sunset.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Sunset</DetailItem>
-                  <DetailParams>{dayjs.unix(data?.sunset).format('h:mm a')}</DetailParams>
-                </DetailContent>
-              </Detail>
+              {leftItems.map((item) => (
+                <Detail key={item?.label}>
+                  <DetailIcon src={item?.icon}></DetailIcon>
+                  <DetailContent>
+                    <DetailItem>{item?.label}</DetailItem>
+                    <DetailParams>{item?.value}</DetailParams>
+                  </DetailContent>
+                </Detail>
+              ))}
             </ListDetail>
           </TableLeft>
           <TableRight>
             <ListDetail>
-              <Detail>
-                <DetailIcon src="image/humidity.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Humidity</DetailItem>
-                  <DetailParams>{`${data?.humidity} %`}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/uvindex.jpg"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>UV Index</DetailItem>
-                  <DetailParams>{data?.uvi}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/moonrise.webp"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Moonrise</DetailItem>
-                  <DetailParams>{dayjs.unix(data?.moonrise).format('h:mm a')}</DetailParams>
-                </DetailContent>
-              </Detail>
-              <Detail>
-                <DetailIcon src="image/moonset.webp"></DetailIcon>
-                <DetailContent>
-                  <DetailItem>Moonset</DetailItem>
-                  <DetailParams>{dayjs.unix(data?.moonset).format('h:mm a')}</DetailParams>
-                </DetailContent>
-              </Detail>
+              {rightItems.map((item) => (
+                <Detail key={item?.label}>
+                  <DetailIcon src={item?.icon}></DetailIcon>
+                  <DetailContent>
+                    <DetailItem>{item?.label}</DetailItem>
+                    <DetailParams>{item?.value}</DetailParams>
+                  </DetailContent>
+                </Detail>
+              ))}
             </ListDetail>
           </TableRight>
         </WeekDetail>

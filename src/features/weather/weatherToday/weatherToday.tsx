@@ -1,3 +1,4 @@
+import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { RootState } from 'app/store';
 import {
   CategoryScale,
@@ -12,9 +13,9 @@ import {
   Tooltip,
 } from 'chart.js';
 import { iconUrlFromcode } from 'components/format';
+import dayjs from 'dayjs';
 import * as React from 'react';
 import { Line } from 'react-chartjs-2';
-import { useDispatch, useSelector } from 'react-redux';
 import { fetchCoordinates } from '../coordinateSlice';
 import { fetchWeather } from '../weatherSlice';
 import {
@@ -35,7 +36,6 @@ import {
   TitleChart,
   Wrapper,
 } from './styles';
-import dayjs from 'dayjs';
 
 ChartJS.register(
   CategoryScale,
@@ -76,13 +76,14 @@ const options: ChartOptions<'line'> = {
 
 export default function Today(props: ITodayProps) {
   const [isActive, setIsActive] = React.useState(0);
+  const dispatch = useAppDispatch();
+  const weatherData = useAppSelector((state: RootState) => state.weather);
+  const coordinates = useAppSelector((state: RootState) => state.coordinate);
+  const isCelsius = useAppSelector((state: RootState) => state.temperature.isCelsius);
   const [city, setCity] = React.useState('hanoi');
-  const dispatch = useDispatch<any>();
-  const weatherData = useSelector((state: RootState) => state.weather);
-  const coordinates = useSelector((state: RootState) => state.coordinate);
   const hourlyList = coordinates?.data?.hourly;
   const dailyList = coordinates?.data?.daily?.slice(0, 6);
-  const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
+
   const handleItemClick = (key: number) => {
     setIsActive(key);
   };

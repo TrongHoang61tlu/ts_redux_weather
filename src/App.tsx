@@ -1,10 +1,9 @@
-import React from 'react';
+import Daily from 'features/weather/weatherDaily/weatherDaily';
+import Hourly from 'features/weather/weatherMonth/weatherHourly';
+import Today from 'features/weather/weatherToday/weatherToday';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Header from './components/Layout/header';
-import { Route, Routes } from 'react-router-dom';
-import Today from 'features/weather/weatherToday/weatherToday';
-import Daily from 'features/weather/weatherDaily/weatherDaily';
-import Month from 'features/weather/weatherMonth/weatherMonth';
 
 interface IAppProps {
   // Các props khác của Header
@@ -12,14 +11,13 @@ interface IAppProps {
 }
 
 function App() {
-  
   return (
     <div>
-      <Header  />
+      <Header />
       <Routes>
-        <Route path="/daily" element={<Daily/>} />
-        <Route path="/" element={<Today/>} />
-        <Route path="/month" element={<Month/>} />
+        <Route path="/daily" element={<Daily />} />
+        <Route path="/" element={<Today />} />
+        <Route path="/hour" element={<Hourly />} />
       </Routes>
     </div>
   );

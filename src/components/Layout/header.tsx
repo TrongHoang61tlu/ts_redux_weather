@@ -35,16 +35,17 @@ interface ListProps {
 const List: ListProps = {
   0: { label: 'Today', link: '/' },
   1: { label: 'Daily', link: '/daily' },
-  2: { label: 'Monthly', link: '/month' },
+  2: { label: 'Hourly', link: '/hour' },
 };
 
 export default function Header(props: IHeaderProps) {
+  const dispatch = useDispatch();
   const [isActive, setIsActive] = React.useState(false);
-  const [city, setCity] = React.useState('');
   const [activeItem, setActiveItem] = React.useState('0');
   const weatherData = useSelector((state: RootState) => state.weather);
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
-  const dispatch = useDispatch();
+  const [city, setCity] = React.useState('');
+
   const handleToggle = () => {
     setIsActive((isActive) => !isActive);
     dispatch(toggleUnit());
@@ -52,7 +53,7 @@ export default function Header(props: IHeaderProps) {
   const handleItemClick = (key: string) => {
     setActiveItem(key);
   };
-
+  
   return (
     <Wrapper>
       <Top>

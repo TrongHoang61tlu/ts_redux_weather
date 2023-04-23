@@ -1,31 +1,38 @@
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { RootState } from 'app/store';
 import dayjs from 'dayjs';
-import WeekItem from 'features/weather/weatherDaily/weekItem/WeekItem';
-import React from 'react';
-import { fetchCoordinates } from '../coordinateSlice';
+import _ from 'lodash';
+import * as React from 'react';
+import { Hour, fetchCoordinates } from '../coordinateSlice';
 import { fetchWeather } from '../weatherSlice';
+import HourlyItem from './hourlyItem/hourlyItem';
 import {
   City,
   HeaderWeek,
   Main,
   ThisWeek,
-  ThisWeekTitle,
   Time,
   Title,
+  TitleDate,
   ToggleButton,
   Top,
   Week,
   Wrapper,
 } from './styles';
-export interface IDailyProps {}
-export default function Daily(props: IDailyProps) {
-  const [city, setCity] = React.useState('hanoi');
+
+export interface IHourlyProps {}
+
+export default function Hourly(props: IHourlyProps) {
   const dispatch = useAppDispatch();
   const weatherData = useAppSelector((state: RootState) => state.weather);
   const coordinates = useAppSelector((state: RootState) => state.coordinate);
+  const [city, setCity] = React.useState('hanoi');
   const [isOpen, setIsOpen] = React.useState(false);
-  const dailyList = coordinates?.data?.daily;
+  const hourlyList = coordinates?.data?.hourly;
+
+  const weatherDataByDate = _.groupBy(hourlyList, (data: Hour) =>
+    dayjs.unix(data.dt).format('dddd, MMMM D')
+  );
 
   const handleOpenAllDayClick = () => {
     setIsOpen((isOpen) => !isOpen);
@@ -49,19 +56,25 @@ export default function Daily(props: IDailyProps) {
           <City>{`${weatherData?.data?.name}, ${weatherData?.data?.sys?.country}`}</City>
         </Main>
         <Time>{`As of ${dayjs.unix(weatherData?.data?.dt).format('h:mm a')} 
-          ${dayjs.unix(weatherData?.data?.timezone).format(`[GMT]Z`)}`}</Time>
+      ${dayjs.unix(weatherData?.data?.timezone).format(`[GMT]Z`)}`}</Time>
       </Top>
       <ThisWeek>
         <HeaderWeek>
-          <ThisWeekTitle>This Week</ThisWeekTitle>
           <ToggleButton onClick={handleOpenAllDayClick}>
             {isOpen ? 'Đóng tất cả' : ' Hiển thị tất cả'}
           </ToggleButton>
         </HeaderWeek>
         <Week>
-          {dailyList?.map((daily) => (
-            <WeekItem data={daily} key={daily?.dt} openAll={isOpen} />
-          ))}
+          <div>
+            {Object.entries(weatherDataByDate).map(([date, hourlyList]) => (
+              <div key={date}>
+                <TitleDate>{date}</TitleDate>
+                {hourlyList.map((hourlyData, index) => (
+                  <HourlyItem data={hourlyData} key={index} openAll={isOpen} />
+                ))}
+              </div>
+            ))}
+          </div>
         </Week>
       </ThisWeek>
     </Wrapper>
