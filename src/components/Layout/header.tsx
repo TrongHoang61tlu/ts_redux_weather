@@ -19,7 +19,9 @@ import {
   TopRight,
   Wrapper,
   DayNight,
+  Error,
 } from './styles';
+import { setSearchText } from 'features/weather/searchSlice';
 
 export interface IHeaderProps {}
 
@@ -46,6 +48,17 @@ export default function Header(props: IHeaderProps) {
   const isCelsius = useSelector((state: RootState) => state.temperature.isCelsius);
   const [city, setCity] = React.useState('');
 
+  const handleSearchClick = () => {
+    dispatch(setSearchText(city));
+    setCity('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchClick();
+    }
+  };
+
   const handleToggle = () => {
     setIsActive((isActive) => !isActive);
     dispatch(toggleUnit());
@@ -53,7 +66,7 @@ export default function Header(props: IHeaderProps) {
   const handleItemClick = (key: string) => {
     setActiveItem(key);
   };
-  
+
   return (
     <Wrapper>
       <Top>
@@ -61,14 +74,18 @@ export default function Header(props: IHeaderProps) {
           <Logo>Home</Logo>
           <Title>{weatherData?.data?.name}</Title>
         </TopLeft>
-        <Search>
-          <Input
-            placeholder="Tìm kiếm"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          ></Input>
-          <Button>Tìm kiếm</Button>
-        </Search>
+        <div>
+          <Search>
+            <Input
+              placeholder="Tìm kiếm"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              onKeyDown={handleKeyDown}
+            ></Input>
+            <Button onClick={handleSearchClick}>Tìm kiếm</Button>
+          </Search>
+          {weatherData.searchError && <Error>{weatherData.searchError}</Error>}
+        </div>
         <TopRight>
           <TempChange>
             <ToggleButton isActive={isActive} onClick={handleToggle} id="buton"></ToggleButton>
@@ -81,10 +98,7 @@ export default function Header(props: IHeaderProps) {
         <ListItem>
           {Object.keys(List).map((item, index) => (
             <Link to={List[item].link} key={item}>
-              <Item
-                isActive={activeItem === item}
-                onClick={() => handleItemClick(item)}
-              >
+              <Item isActive={activeItem === item} onClick={() => handleItemClick(item)}>
                 {List[item].label}
               </Item>
             </Link>

@@ -26,7 +26,7 @@ export default function Hourly(props: IHourlyProps) {
   const dispatch = useAppDispatch();
   const weatherData = useAppSelector((state: RootState) => state.weather);
   const coordinates = useAppSelector((state: RootState) => state.coordinate);
-  const [city, setCity] = React.useState('hanoi');
+  const city = useAppSelector((state: RootState) => state.search.searchText);
   const [isOpen, setIsOpen] = React.useState(false);
   const hourlyList = coordinates?.data?.hourly;
 
@@ -40,7 +40,7 @@ export default function Hourly(props: IHourlyProps) {
 
   React.useEffect(() => {
     dispatch(fetchWeather(city)); // Gọi async thunk fetchWeather khi component mount
-  }, []);
+  }, [city]);
   React.useEffect(() => {
     const lat = weatherData?.data?.coord?.lat;
     const lon = weatherData?.data?.coord?.lon;

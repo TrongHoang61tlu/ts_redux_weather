@@ -58,19 +58,33 @@ const defaultWeatherData: WeatherData = {
   },
 };
 
-const initialState: { data: WeatherData; loading: boolean; error: null } = {
+const initialState: {
+  data: WeatherData;
+  loading: boolean;
+  error: null | string;
+  searchError: null | string;
+} = {
   data: defaultWeatherData,
   loading: false,
   error: null,
+  searchError: null,
 };
-export const fetchWeather = createAsyncThunk('weather/fetchWeather', async (city: string) => {
+export const fetchWeather = createAsyncThunk<
+  WeatherData, // kiểu dữ liệu trả về khi thành công
+  string, // kiểu dữ liệu của tham số truyền vào
+  {
+    rejectValue: {
+      message: string;
+    };
+  }
+>('weather/fetchWeather', async (city: string, { rejectWithValue }) => {
   try {
     const response = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=e5f1e0e91073e047bfd37039ad433153`
     );
     return response.data;
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
+    return rejectWithValue(err.response.data);
   }
 });
 
@@ -82,6 +96,8 @@ const weatherSlice = createSlice({
     builder
       .addCase(fetchWeather.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.searchError = null;
       })
       .addCase(fetchWeather.fulfilled, (state, action) => {
         state.loading = false;
@@ -89,7 +105,11 @@ const weatherSlice = createSlice({
       })
       .addCase(fetchWeather.rejected, (state, action) => {
         state.loading = false;
-        // state.error = action?.error.message || 'Unknown error';
+        if (action.payload) {
+          state.searchError = action.payload.message; // Lưu thông báo lỗi của tìm kiếm vào searchError
+        } else {
+          state.error = action.error.message || 'Unknown error';
+        }
       });
   },
 });

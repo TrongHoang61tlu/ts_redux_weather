@@ -42,7 +42,8 @@ export const Search = styled.div`
   width: 500px;
   height: 36px;
   display: flex;
-  padding: 10px
+  padding: 10px;
+  padding-bottom: 0;
 `;
 
 export const Button = styled.button`
@@ -134,3 +135,9 @@ export const Link = styled(NavLink)`
   text-decoration: none;
   color: white;
 `;
+
+export const Error = styled.span`
+  margin-top: 0px;
+  padding-left :10px;
+  color: white;
+`
