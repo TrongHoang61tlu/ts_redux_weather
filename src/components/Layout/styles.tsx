@@ -65,8 +65,13 @@ export const Input = styled.input`
   width: 70%;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 25px;
-  height: 30px;
+  height: 28px;
   border: 2px solid #cccccc;
+  padding : 2px;
+  padding-left: 15px;
+  &:focus {
+    outline: none;
+  }
 `;
 
 export const TopRight = styled.div`
