@@ -20,10 +20,10 @@ import {
 } from './styles';
 export interface IDailyProps {}
 export default function Daily(props: IDailyProps) {
-  const [city, setCity] = React.useState('hanoi');
   const dispatch = useAppDispatch();
   const weatherData = useAppSelector((state: RootState) => state.weather);
   const coordinates = useAppSelector((state: RootState) => state.coordinate);
+  const city = useAppSelector((state: RootState) => state.search.searchText);
   const [isOpen, setIsOpen] = React.useState(false);
   const dailyList = coordinates?.data?.daily;
 
@@ -33,7 +33,7 @@ export default function Daily(props: IDailyProps) {
 
   React.useEffect(() => {
     dispatch(fetchWeather(city)); // Gọi async thunk fetchWeather khi component mount
-  }, []);
+  }, [city]);
   React.useEffect(() => {
     const lat = weatherData?.data?.coord?.lat;
     const lon = weatherData?.data?.coord?.lon;

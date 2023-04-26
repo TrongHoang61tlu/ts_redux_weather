@@ -80,7 +80,7 @@ export default function Today(props: ITodayProps) {
   const weatherData = useAppSelector((state: RootState) => state.weather);
   const coordinates = useAppSelector((state: RootState) => state.coordinate);
   const isCelsius = useAppSelector((state: RootState) => state.temperature.isCelsius);
-  const [city, setCity] = React.useState('hanoi');
+  const city = useAppSelector((state: RootState) => state.search.searchText);
   const hourlyList = coordinates?.data?.hourly;
   const dailyList = coordinates?.data?.daily?.slice(0, 6);
 
@@ -121,7 +121,8 @@ export default function Today(props: ITodayProps) {
 
   React.useEffect(() => {
     dispatch(fetchWeather(city)); // Gọi async thunk fetchWeather khi component mount
-  }, []);
+  }, [city]);
+
   React.useEffect(() => {
     const lat = weatherData?.data?.coord?.lat;
     const lon = weatherData?.data?.coord?.lon;

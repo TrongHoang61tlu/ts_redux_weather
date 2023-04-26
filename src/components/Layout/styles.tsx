@@ -42,7 +42,8 @@ export const Search = styled.div`
   width: 500px;
   height: 36px;
   display: flex;
-  padding: 10px
+  padding: 10px;
+  padding-bottom: 0;
 `;
 
 export const Button = styled.button`
@@ -64,8 +65,13 @@ export const Input = styled.input`
   width: 70%;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 25px;
-  height: 30px;
+  height: 28px;
   border: 2px solid #cccccc;
+  padding : 2px;
+  padding-left: 15px;
+  &:focus {
+    outline: none;
+  }
 `;
 
 export const TopRight = styled.div`
@@ -134,3 +140,9 @@ export const Link = styled(NavLink)`
   text-decoration: none;
   color: white;
 `;
+
+export const Error = styled.span`
+  margin-top: 0px;
+  padding-left :10px;
+  color: white;
+`
